@@ -1,13 +1,73 @@
 ---
 title: "XAI3"
-output: html_notebook
+date: "`r Sys.Date()`"
+output: html_document
 ---
 
 # 1. One dimensional Partial Dependence Plot
+```{r}
+#install.packages("randomForest")
+#install.packages("pdp")
+library(randomForest)
+library(pdp)
+
+data = read.csv('Datos/hour.csv')
+
+data$season_winter <- ifelse(data$season == 1, 1, 0)
+data$season_spring <- ifelse(data$season == 2, 1, 0)
+data$season_summer <- ifelse(data$season == 3, 1, 0)
+
+data$MISTY <- ifelse(data$weathersit == 2, 1, 0)
+
+data$RAIN <- ifelse(data$weathersit %in% c(3,4), 1, 0)
+
+data$temp <- (data$temp) * (39-(-8)) + (-8)
+
+data$hum <- data$hum * 100
+
+data$windspeed <- data$windspeed * 67
+
+data$dteday <- as.Date(data$dteday)
+start_date <- as.Date("2011-01-01")
+data$days_since_2011 <- as.numeric(data$dteday - start_date)
+
+
+model_data <- data[, c("workingday", "holiday", "season_winter", "season_spring", 
+                           "season_summer", "MISTY", "RAIN", "temp", "hum", 
+                           "windspeed", "days_since_2011", "cnt")]
+
+
+```
 
 ```{r}
-data = read.csv('Datos/day.csv')
+# Fit Random Forest model
+rf_model <- randomForest(cnt ~ days_since_2011 + temp + hum + windspeed, data = model_data, ntree = 500)
+```
 
-print(data)
+
+```{r}
+# PDP for days since 2011
+pdp_days <- partial(rf_model, pred.var = "days_since_2011", grid.resolution = 100)
+plot(pdp_days, main = "PDP for Days Since 2011", xlab = "Days Since 2011", ylab = "Partial Dependence")
+```
+
+
+```{r}
+# Repeat for other variables
+pdp_temp <- partial(rf_model, pred.var = "temp", grid.resolution = 100)
+plot(pdp_temp, main = "PDP for Temperature", xlab = "Temperature", ylab = "Partial Dependence")
+```
+
+
+```{r}
+pdp_humidity <- partial(rf_model, pred.var = "hum", grid.resolution = 100)
+plot(pdp_humidity, main = "PDP for Humidity", xlab = "Humidity", ylab = "Partial Dependence")
+```
+
+
+```{r}
+pdp_windspeed <- partial(rf_model, pred.var = "windspeed", grid.resolution = 100)
+plot(pdp_windspeed, main = "PDP for Wind Speed", xlab = "Wind Speed", ylab = "Partial Dependence")
+
 ```
 
