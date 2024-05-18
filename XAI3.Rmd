@@ -10,6 +10,7 @@ output: html_document
 #install.packages("pdp")
 library(randomForest)
 library(pdp)
+library(ggplot2)
 
 data = read.csv('Datos/hour.csv')
 
@@ -48,26 +49,78 @@ rf_model <- randomForest(cnt ~ days_since_2011 + temp + hum + windspeed, data = 
 ```{r}
 # PDP for days since 2011
 pdp_days <- partial(rf_model, pred.var = "days_since_2011", grid.resolution = 100)
-plot(pdp_days, main = "PDP for Days Since 2011", xlab = "Days Since 2011", ylab = "Partial Dependence")
+
+# Create a ggplot from the pdp data
+ggp <- ggplot(pdp_days, aes(x = days_since_2011, y = yhat)) +
+  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+  labs(title = "PDP for days_since_2011",
+       x = "days_since_2011",
+       y = "Partial Dependence") +
+  theme_minimal()
+
+# Display the plot
+print(ggp)
 ```
 
 
 ```{r}
 # Repeat for other variables
 pdp_temp <- partial(rf_model, pred.var = "temp", grid.resolution = 100)
-plot(pdp_temp, main = "PDP for Temperature", xlab = "Temperature", ylab = "Partial Dependence")
+
+# Create a ggplot from the pdp data
+ggp <- ggplot(pdp_temp, aes(x = temp, y = yhat)) +
+  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+  labs(title = "PDP for Temperature",
+       x = "Temperature",
+       y = "Partial Dependence") +
+  theme_minimal()
+
+# Display the plot
+print(ggp)
+
 ```
 
 
 ```{r}
 pdp_humidity <- partial(rf_model, pred.var = "hum", grid.resolution = 100)
-plot(pdp_humidity, main = "PDP for Humidity", xlab = "Humidity", ylab = "Partial Dependence")
+
+# Create a ggplot from the pdp data
+ggp <- ggplot(pdp_humidity, aes(x = hum, y = yhat)) +
+  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+  labs(title = "PDP for hum",
+       x = "hum",
+       y = "Partial Dependence") +
+  theme_minimal()
+
+# Display the plot
+print(ggp)
 ```
 
 
 ```{r}
 pdp_windspeed <- partial(rf_model, pred.var = "windspeed", grid.resolution = 100)
-plot(pdp_windspeed, main = "PDP for Wind Speed", xlab = "Wind Speed", ylab = "Partial Dependence")
+
+# Create a ggplot from the pdp data
+ggp <- ggplot(pdp_windspeed, aes(x = windspeed, y = yhat)) +
+  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+  labs(title = "PDP for windspeed",
+       x = "windspeed",
+       y = "Partial Dependence") +
+  theme_minimal()
+
+# Display the plot
+print(ggp)
 
 ```
+# 2. Bidimensional Partial Dependency Plot.
+```{r}
+
+```
+
+
+
+
+
+
+
 
