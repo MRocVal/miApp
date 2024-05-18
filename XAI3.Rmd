@@ -1,0 +1,11 @@
+---
+title: "XAI3"
+output: html_notebook
+---
+
+# 1. One dimensional Partial Dependence Plot
+
+```{r}
+data = read.csv('Datos/day.csv')
+```
+
