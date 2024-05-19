@@ -114,13 +114,121 @@ print(ggp)
 ```
 # 2. Bidimensional Partial Dependency Plot.
 ```{r}
+library(ggplot2)
+library(randomForest)
+library(dplyr)
+
+set.seed(123) 
+sampled_data <- sample_n(model_data, size = 2000) 
+```
+
+```{r}
+model <- randomForest(cnt ~ temp + hum, data = sampled_data)
+```
+
+```{r}
+# Create a grid of values for temperature and humidity
+temp_seq <- seq(from = min(sampled_data$temp), to = max(sampled_data$temp), length.out = 50)
+hum_seq <- seq(from = min(sampled_data$hum), to = max(sampled_data$hum), length.out = 50)
+grid <- expand.grid(temp = temp_seq, hum = hum_seq)
 
 ```
 
 
+```{r}
+grid$predicted_cnt = predict(model, newdata = grid)
+```
+
+```{r}
+p = ggplot() +
+  geom_tile(data = grid, aes(x = temp, y = hum, fill = predicted_cnt)) +  # Create the 2D plot
+  geom_density_2d(data = data, aes(x = temp, y = hum), linewidth = 0.3, color = "white") +  # Overlay density lines
+  scale_fill_gradientn(colors = c("#A62957", "#D966A5", "#2180A6", "#3BC9D9")) +  # Custom color gradient
+  labs(title = "2D Partial Dependency Plot with Density Overlay",
+       subtitle = "Effect of Temperature and Humidity on Bike Rentals",
+       x = "Temperature (°C)", y = "Humidity (%)",
+       fill = "Predicted Number of Bikes Rented") +
+  theme_minimal()
+p
+
+```
+
+# 3. PDP to explain the price of a house.
+
+```{r}
+# Load necessary libraries
+library(randomForest)
+library(ggplot2)
+library(dplyr)
+
+# Load the data
+kc_house_data <- read.csv("Datos/kc_house_data.csv")
+
+# View the structure of the data
+str(kc_house_data)
+
+```
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Sample the data
+sampled_data <- kc_house_data %>% sample_n(1000)  # Adjust the sample size as needed
+
+```
+
+```{r}
+# Train the Random Forest model
+# Train the Random Forest model
+model <- randomForest(price ~ bedrooms + bathrooms + sqft_living + sqft_lot + floors + yr_built,
+                      data = sampled_data)
+
+# View the model summary
+print(model)
 
 
+```
 
+```{r}
+# Function to generate partial dependency data for a single feature
+generate_pdp_data <- function(model, data, feature, grid_points = 50) {
+  grid <- data.frame(feature = seq(min(data[[feature]]), max(data[[feature]]), length.out = grid_points))
+  colnames(grid) <- feature
+  other_features <- setdiff(names(data), c(feature, "price"))
+  for (f in other_features) {
+    grid[[f]] <- mean(data[[f]], na.rm = TRUE)
+  }
+  grid$predicted_price <- predict(model, newdata = grid)
+  return(grid)
+}
+
+# Generate PDP data for each feature
+features <- c("bedrooms", "bathrooms", "sqft_living", "sqft_lot", "floors", "yr_built")
+pdp_data <- lapply(features, function(f) {
+  pdp <- generate_pdp_data(model, sampled_data, f)
+  colnames(pdp)[1] <- f
+  return(pdp)
+})
+
+# Function to plot the partial dependency for a single feature with color
+plot_pdp <- function(pdp_data, feature, color = "#D966A5") {
+  ggplot(pdp_data, aes_string(x = feature, y = "predicted_price")) +
+    geom_line(color = color) +
+    labs(title = paste("Partial Dependency Plot:", feature),
+         x = feature, y = "Predicted Price") +
+    theme_minimal()
+}
+
+# Create and display PDP plots with color
+pdp_plots <- lapply(1:length(features), function(i) plot_pdp(pdp_data[[i]], features[i], color = "#D966A5"))
+
+# Print PDP plots
+library(gridExtra)
+a = a = do.call(grid.arrange, c(pdp_plots, ncol = 2))
+
+a
+```
 
 
 
