@@ -60,5 +60,5 @@ We use a Random Forest model to predict house prices based on features: bedrooms
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/your-repository.git
+   git clone https://github.com/MRocVal/miApp.git
    cd your-repository
