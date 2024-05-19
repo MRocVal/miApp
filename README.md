@@ -1,6 +1,6 @@
 # miApp
 
-![](images/DALL·E 2024-05-19 13.07.12 - A vibrant scene at the City of Arts and Sciences in Valencia, Spain, with tourists riding bicycles. The modern architectural structures, including the.webp)
+![](images/DALL·E 2024-05-19 13.07.12 - A vibrant scene at the City of Arts and Sciences in Valencia, Spain, with tourists riding bicycles. The modern architectural structures, including the.jpeg)
 
 # Model Agnostic Methods Analysis
 
