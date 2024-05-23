@@ -18,7 +18,7 @@ This project aims to apply model agnostic methods to understand the influence of
 
 ## Dataset
 
-The dataset `kc_house_data.csv` contains the following features:
+1.  The dataset `kc_house_data.csv` contains the following features:
 
 -   `id`
 -   `date`
@@ -42,6 +42,14 @@ The dataset `kc_house_data.csv` contains the following features:
 -   `sqft_living15`
 -   `sqft_lot15`
 
+2.  The dataset `day.csv` contains the following features:
+
+-   `days_since_2011`: Number of days since the start of 2011 (potentially a time variable).
+-   `temperature`: Temperature on a given day.
+-   `humidity`: Humidity level on a given day.
+-   `wind_speed`: Wind speed on a given day.
+-   `bike_rental_counts`: Number of bikes rented on that day (target variable).
+
 ## Analysis
 
 ### Partial Dependence Plot
@@ -58,4 +66,4 @@ We use a Random Forest model to predict house prices based on features: bedrooms
 
 ## Setup and Installation
 
-1.  **Clone the repository**: \`\`\`bash git clone <https://github.com/MRocVal/miApp.git> cd your-repository
+**Clone the repository**: `bash git clone https://github.com/MRocVal/miApp.git cd your-repository`

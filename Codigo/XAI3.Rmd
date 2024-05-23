@@ -49,69 +49,65 @@ rf_model <- randomForest(cnt ~ days_since_2011 + temp + hum + windspeed, data = 
 ```{r}
 # PDP for days since 2011
 pdp_days <- partial(rf_model, pred.var = "days_since_2011", grid.resolution = 100)
+```
 
-# Create a ggplot from the pdp data
-ggp <- ggplot(pdp_days, aes(x = days_since_2011, y = yhat)) +
-  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+```{r}
+ggplot(pdp_days, aes(x = days_since_2011, y = yhat)) +
+  geom_path() +
+  geom_line(color = "#9FBFB6") +
+  geom_rug(alpha=0.9, color = '#D9A282', sides = "b") +  # "l" indica solo el lado izquierdo (eje Y)
   labs(title = "PDP for days_since_2011",
        x = "days_since_2011",
        y = "Partial Dependence") +
   theme_minimal()
-
-# Display the plot
-print(ggp)
 ```
-
 
 ```{r}
 # Repeat for other variables
 pdp_temp <- partial(rf_model, pred.var = "temp", grid.resolution = 100)
+```
 
-# Create a ggplot from the pdp data
-ggp <- ggplot(pdp_temp, aes(x = temp, y = yhat)) +
-  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
+```{r}
+ggplot(pdp_temp, aes(x = temp, y = yhat)) +
+  geom_path() +
+  geom_line(color = "#9FBFB6") +
+  geom_rug(alpha=0.9, color = '#D9A282', sides = "b") +
   labs(title = "PDP for Temperature",
        x = "Temperature",
        y = "Partial Dependence") +
   theme_minimal()
-
-# Display the plot
-print(ggp)
-
 ```
 
 
 ```{r}
 pdp_humidity <- partial(rf_model, pred.var = "hum", grid.resolution = 100)
-
-# Create a ggplot from the pdp data
-ggp <- ggplot(pdp_humidity, aes(x = hum, y = yhat)) +
-  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
-  labs(title = "PDP for hum",
-       x = "hum",
+```
+```{r}
+ggplot(pdp_humidity, aes(x = hum, y = yhat)) +
+  geom_path() +
+  geom_line(color = "#9FBFB6") +
+  geom_rug(alpha=0.9, color = '#D9A282', sides = "b") +
+  labs(title = "PDP for Humidity",
+       x = "Humidity",
        y = "Partial Dependence") +
   theme_minimal()
-
-# Display the plot
-print(ggp)
 ```
 
 
 ```{r}
 pdp_windspeed <- partial(rf_model, pred.var = "windspeed", grid.resolution = 100)
-
-# Create a ggplot from the pdp data
-ggp <- ggplot(pdp_windspeed, aes(x = windspeed, y = yhat)) +
-  geom_line(color = "#8C274C") +  # Change 'blue' to any color you prefer
-  labs(title = "PDP for windspeed",
-       x = "windspeed",
+```
+```{r}
+ggplot(pdp_windspeed, aes(x = windspeed, y = yhat)) +
+  geom_path() +
+  geom_line(color = "#9FBFB6") +
+  geom_rug(alpha=0.9, color = '#D9A282', sides = "b") +
+  labs(title = "PDP for Windspeed",
+       x = "Windspeed",
        y = "Partial Dependence") +
   theme_minimal()
-
-# Display the plot
-print(ggp)
-
 ```
+
 # 2. Bidimensional Partial Dependency Plot.
 ```{r}
 library(ggplot2)
@@ -143,7 +139,7 @@ grid$predicted_cnt = predict(model, newdata = grid)
 p = ggplot() +
   geom_tile(data = grid, aes(x = temp, y = hum, fill = predicted_cnt)) +  # Create the 2D plot
   geom_density_2d(data = data, aes(x = temp, y = hum), linewidth = 0.3, color = "white") +  # Overlay density lines
-  scale_fill_gradientn(colors = c("#A62957", "#D966A5", "#2180A6", "#3BC9D9")) +  # Custom color gradient
+  scale_fill_gradientn(colors = c("#416C7B", "#9FBFB6", "#F2D4AE", "#D9A282")) +  # Custom color gradient
   labs(title = "2D Partial Dependency Plot with Density Overlay",
        subtitle = "Effect of Temperature and Humidity on Bike Rentals",
        x = "Temperature (°C)", y = "Humidity (%)",
@@ -161,12 +157,8 @@ library(randomForest)
 library(ggplot2)
 library(dplyr)
 
-# Load the data
 kc_house_data <- read.csv("Datos/kc_house_data.csv")
-
-# View the structure of the data
 str(kc_house_data)
-
 ```
 
 ```{r}
@@ -175,19 +167,12 @@ set.seed(123)
 
 # Sample the data
 sampled_data <- kc_house_data %>% sample_n(1000)  # Adjust the sample size as needed
-
 ```
 
 ```{r}
 # Train the Random Forest model
-# Train the Random Forest model
 model <- randomForest(price ~ bedrooms + bathrooms + sqft_living + sqft_lot + floors + yr_built,
                       data = sampled_data)
-
-# View the model summary
-print(model)
-
-
 ```
 
 ```{r}
@@ -212,22 +197,22 @@ pdp_data <- lapply(features, function(f) {
 })
 
 # Function to plot the partial dependency for a single feature with color
-plot_pdp <- function(pdp_data, feature, color = "#D966A5") {
+plot_pdp <- function(pdp_data, feature, color = "#9FBFB6") {
   ggplot(pdp_data, aes_string(x = feature, y = "predicted_price")) +
+    geom_path() +
     geom_line(color = color) +
+    geom_rug(alpha = 0.9, color = '#D9A282', sides = "b") +
     labs(title = paste("Partial Dependency Plot:", feature),
          x = feature, y = "Predicted Price") +
     theme_minimal()
 }
 
 # Create and display PDP plots with color
-pdp_plots <- lapply(1:length(features), function(i) plot_pdp(pdp_data[[i]], features[i], color = "#D966A5"))
+pdp_plots <- lapply(1:length(features), function(i) plot_pdp(pdp_data[[i]], features[i], color = "#9FBFB6"))
 
 # Print PDP plots
 library(gridExtra)
-a = a = do.call(grid.arrange, c(pdp_plots, ncol = 2))
-
-a
+do.call(grid.arrange, c(pdp_plots, ncol = 2))
 ```
 
 
